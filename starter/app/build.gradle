@@ -1,18 +1,25 @@
-apply plugin: 'com.android.application'
-
-apply plugin: 'kotlin-android'
-
-apply plugin: 'kotlin-android-extensions'
+plugins {
+    id 'com.android.application'
+    id 'kotlin-android'
+    id 'kotlin-kapt'
+    id 'androidx.navigation.safeargs.kotlin'  // .kotlin --> KTX: nav.action accepts param. ("it")
+    id 'kotlin-parcelize'
+}
 
 android {
-    compileSdkVersion 30
+    compileSdkVersion 31
     defaultConfig {
         applicationId "com.udacity"
         minSdkVersion 24
-        targetSdkVersion 30
+        targetSdkVersion 31
         versionCode 1
         versionName "1.0"
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
+
+        // read API key from environment variable "NASA_API_KEY"
+        // ... see: https://medium.com/@alexzaitsev/how-to-move-password-to-system-environment-variables-and-load-it-with-gradle-837bc18e6c8f
+        def gitHubApiKey = System.getenv("GH_API_KEY")
+        buildConfigField("String", "GH_API_KEY", "\"${gitHubApiKey}\"")
     }
     buildTypes {
         release {
@@ -20,16 +27,34 @@ android {
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
         }
     }
-}
+    // Enables view binding.
+    buildFeatures {
+        viewBinding true
+    }
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_11
+        targetCompatibility JavaVersion.VERSION_11
+    }
+    kotlinOptions {
+        jvmTarget = '11'
+    }
+    dependencies {
+        implementation fileTree(dir: 'libs', include: ['*.jar'])
+        // Kotlin
+        implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk8:$version_kotlin"
 
-dependencies {
-    implementation fileTree(dir: 'libs', include: ['*.jar'])
-    implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kotlin_version"
-    implementation 'androidx.appcompat:appcompat:1.2.0'
-    implementation 'androidx.core:core-ktx:1.3.1'
-    implementation 'androidx.constraintlayout:constraintlayout:2.0.0-rc1'
-    implementation 'com.google.android.material:material:1.0.0'
-    testImplementation 'junit:junit:4.12'
-    androidTestImplementation 'androidx.test:runner:1.1.1'
-    androidTestImplementation 'androidx.test.espresso:espresso-core:3.1.1'
+        // fix inconsistency between libs
+        // https://stackoverflow.com/questions/42569445/warning-kotlin-runtime-jar-files-in-the-classpath-should-have-the-same-version
+        implementation "org.jetbrains.kotlin:kotlin-reflect:$version_reflect"
+        implementation "androidx.appcompat:appcompat:$version_appcompat"
+        implementation "androidx.core:core-ktx:$version_core"
+        implementation "androidx.constraintlayout:constraintlayout:$version_constraint_layout"
+        implementation "androidx.lifecycle:lifecycle-viewmodel-ktx:$version_lifecycle"
+        implementation "androidx.lifecycle:lifecycle-livedata-ktx:$version_lifecycle"
+        implementation "com.google.android.material:material:$version_material"
+
+        testImplementation "junit:junit:$version_junit"
+        androidTestImplementation "androidx.test:runner:$version_test_runner"
+        androidTestImplementation "androidx.test.espresso:espresso-core:3.4.0"
+    }
 }
