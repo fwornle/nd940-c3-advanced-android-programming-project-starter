@@ -75,6 +75,7 @@
         app:alternativeTitle="@string/button_loading"
         app:defaultColor="@color/colorPrimary"
         app:alternativeColor="@color/colorPrimaryDark"
+        app:progressCircleColor="@color/colorAccent"
         tools:background="@color/colorPrimary"
         />
 

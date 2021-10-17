@@ -25,6 +25,7 @@ class LoadingButton @JvmOverloads constructor(
     private var btnDefaultTitle = ""
     private var btnAlternativeColor = 0
     private var btnAlternativeTitle = ""
+    private var btnProgressCircleColor = 0
 
     // button width / height
     private var widthSize = 0
@@ -136,6 +137,7 @@ class LoadingButton @JvmOverloads constructor(
             btnDefaultTitle = getString(R.styleable.LoadingButton_defaultTitle) ?: "Load"
             btnAlternativeColor = getColor(R.styleable.LoadingButton_alternativeColor, Color.LTGRAY)
             btnAlternativeTitle = getString(R.styleable.LoadingButton_alternativeTitle) ?: "Loading..."
+            btnProgressCircleColor = getColor(R.styleable.LoadingButton_progressCircleColor, Color.YELLOW)
         }
 
         // starting with btnTitle set to btnDefaultTitle
@@ -192,10 +194,8 @@ class LoadingButton @JvmOverloads constructor(
         canvas?.drawRect(widthLoadingBar, 0.0f, widthButton, heightButton, paint)
 
         // loading "progress circle"
-        paint.color = Color.YELLOW
+        paint.color = btnProgressCircleColor
         val angle = (((widthLoadingBar.roundToInt() % widthSize).toFloat() / widthSize) * 360)
-
-        //
         canvas?.drawArc(
             widthButton * 0.75f,
             heightButton/2 - 35,
