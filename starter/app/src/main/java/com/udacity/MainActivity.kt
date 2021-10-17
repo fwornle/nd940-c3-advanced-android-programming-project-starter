@@ -15,7 +15,6 @@ import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.NotificationCompat
 import com.udacity.databinding.ActivityMainBinding
-import com.udacity.databinding.ContentMainBinding
 import timber.log.Timber
 
 
@@ -30,14 +29,12 @@ class MainActivity : AppCompatActivity() {
 
     // view binding
     private lateinit var activityMainBinding: ActivityMainBinding
-    private lateinit var contentMainBinding: ContentMainBinding
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
         // view binding for main activity (incl. content)
         activityMainBinding = ActivityMainBinding.inflate(layoutInflater)
-        contentMainBinding = ContentMainBinding.inflate(layoutInflater)
 
         // inflate layout (this includes 'content')
         activityMainBinding.root.apply { setContentView(this) }
@@ -49,7 +46,7 @@ class MainActivity : AppCompatActivity() {
         registerReceiver(receiver, IntentFilter(DownloadManager.ACTION_DOWNLOAD_COMPLETE))
 
         // onClick listener for download button
-        contentMainBinding.customButton.setOnClickListener {
+        activityMainBinding.includes.customButton.setOnClickListener {
             download()
         }
     }
