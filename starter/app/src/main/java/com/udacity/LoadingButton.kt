@@ -1,5 +1,6 @@
 package com.udacity
 
+import android.R.attr
 import android.animation.ValueAnimator
 import android.content.Context
 import android.graphics.Canvas
@@ -13,13 +14,15 @@ import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import timber.log.Timber
 import kotlin.properties.Delegates
+import android.R.attr.fillColor
+
+
+
 
 class LoadingButton @JvmOverloads constructor(
     context: Context, attrs: AttributeSet? = null, defStyleAttr: Int = 0
 ) : View(context, attrs, defStyleAttr) {
 
-    private var widthSize = 0
-    private var heightSize = 0
 
     // custom attributes - set in init
     private var btnDefaultColor = 0
@@ -27,10 +30,21 @@ class LoadingButton @JvmOverloads constructor(
     private var btnAlternativeColor = 0
     private var btnAlternativeTitle = ""
 
+    // button width / height
+    private var widthSize = 0
+    private var heightSize = 0
+
     // loading animation done via second rectangle
     private var percLoadingBar: Float = 0.0f
     private var btnTitle: String = ""
 
+    // activate / block the button animation from outside
+    private var btnActive = false
+
+    // setter function for "active state of the button" (to activate programmatically)
+    fun setActive(state: Boolean) {
+        btnActive = state
+    }
 
     // initialize some basic properties to avoid having to do so in onDraw
     private val paint = Paint(Paint.ANTI_ALIAS_FLAG).apply {
@@ -144,7 +158,9 @@ class LoadingButton @JvmOverloads constructor(
         super.performClick()
 
         // adjust state, everytime the button is clicked
-        buttonState = buttonState.next()
+        if(btnActive) {
+            buttonState = buttonState.next()
+        }
 
         return true
     }

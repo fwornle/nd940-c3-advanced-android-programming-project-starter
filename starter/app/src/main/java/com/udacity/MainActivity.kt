@@ -46,9 +46,29 @@ class MainActivity : AppCompatActivity() {
         registerReceiver(receiver, IntentFilter(DownloadManager.ACTION_DOWNLOAD_COMPLETE))
 
         // onClick listener for download button
+        // note: included layout are reachable via their ID (see activity_main.xml)
+        // REF: https://chetangupta.net/viewbinding/#includeMerge
         activityMainBinding.includes.customButton.setOnClickListener {
-            download()
+
+            // anything selected yet?
+            selUrl?.let {
+
+                // activate animation in LoadingButton
+                activityMainBinding.includes.customButton.setActive(true)
+
+                // yes --> activate button and initiate download
+                download(it)
+
+            } ?: run {
+
+                // nothing selected yet --> display toast
+                Toast.makeText(this,"Please select the file to download",
+                    Toast.LENGTH_SHORT).show()
+
+            }
+
         }
+
     }
 
     private val receiver = object : BroadcastReceiver() {
@@ -60,34 +80,22 @@ class MainActivity : AppCompatActivity() {
 
 
     // do da downloading...
-    private fun download() {
+    private fun download(daUrl: String) {
 
-        // anything selected yet?
-        selUrl?.let {
+        val request =
+            DownloadManager.Request(Uri.parse(daUrl))
+                .setTitle(getString(R.string.app_name))
+                .setDescription(getString(R.string.app_description))
+                .setRequiresCharging(false)
+                .setAllowedOverMetered(true)
+                .setAllowedOverRoaming(true)
+                .setNotificationVisibility(DownloadManager.Request.VISIBILITY_VISIBLE)
 
-            // yes --> initiate download
-            val request =
-                DownloadManager.Request(Uri.parse(it))
-                    .setTitle(getString(R.string.app_name))
-                    .setDescription(getString(R.string.app_description))
-                    .setRequiresCharging(false)
-                    .setAllowedOverMetered(true)
-                    .setAllowedOverRoaming(true)
-                    .setNotificationVisibility(DownloadManager.Request.VISIBILITY_VISIBLE)
+        val downloadManager = getSystemService(DOWNLOAD_SERVICE) as DownloadManager
 
-            val downloadManager = getSystemService(DOWNLOAD_SERVICE) as DownloadManager
-
-            Timber.i("starting download from URL ${it}")
-            downloadID =
-                downloadManager.enqueue(request)// enqueue puts the download request in the queue.
-
-        } ?: run {
-
-            // nothing selected yet --> display toast
-            Toast.makeText(this,"Please select the file to download",
-                Toast.LENGTH_SHORT).show()
-
-        }
+        Timber.i("starting download from URL ${daUrl}")
+        downloadID =
+            downloadManager.enqueue(request)// enqueue puts the download request in the queue.
 
     }  // download()
 
