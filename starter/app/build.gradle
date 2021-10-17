@@ -53,6 +53,9 @@ android {
         implementation "androidx.lifecycle:lifecycle-livedata-ktx:$version_lifecycle"
         implementation "com.google.android.material:material:$version_material"
 
+        // logging
+        implementation "com.jakewharton.timber:timber:$version_timber"
+
         testImplementation "junit:junit:$version_junit"
         androidTestImplementation "androidx.test:runner:$version_test_runner"
         androidTestImplementation "androidx.test.espresso:espresso-core:3.4.0"
