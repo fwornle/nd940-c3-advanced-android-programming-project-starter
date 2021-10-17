@@ -12,6 +12,7 @@ import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import timber.log.Timber
+import kotlin.math.roundToInt
 import kotlin.properties.Delegates
 
 
@@ -131,9 +132,9 @@ class LoadingButton @JvmOverloads constructor(
 
         // get custom attributes
         context.withStyledAttributes(attrs, R.styleable.LoadingButton) {
-            btnDefaultColor = getColor(R.styleable.LoadingButton_defaultColor, 0)
+            btnDefaultColor = getColor(R.styleable.LoadingButton_defaultColor, Color.BLUE)
             btnDefaultTitle = getString(R.styleable.LoadingButton_defaultTitle) ?: "Load"
-            btnAlternativeColor = getColor(R.styleable.LoadingButton_alternativeColor, 0)
+            btnAlternativeColor = getColor(R.styleable.LoadingButton_alternativeColor, Color.LTGRAY)
             btnAlternativeTitle = getString(R.styleable.LoadingButton_alternativeTitle) ?: "Loading..."
         }
 
@@ -189,6 +190,22 @@ class LoadingButton @JvmOverloads constructor(
         // draw rectangle with full width of the button and primary color
         paint.color = btnDefaultColor
         canvas?.drawRect(widthLoadingBar, 0.0f, widthButton, heightButton, paint)
+
+        // loading "progress circle"
+        paint.color = Color.YELLOW
+        val angle = (((widthLoadingBar.roundToInt() % widthSize).toFloat() / widthSize) * 360)
+
+        //
+        canvas?.drawArc(
+            widthButton * 0.75f,
+            heightButton/2 - 35,
+            widthButton * 0.75f + 70,
+            heightButton/2 + 35,
+            -90f,
+            angle,
+            true,
+            paint
+        )
 
         // display title (as per layout xml - custom attribute 'defaultTitle')
         paint.color = Color.WHITE
