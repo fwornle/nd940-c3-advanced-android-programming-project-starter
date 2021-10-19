@@ -1,19 +1,23 @@
 package com.udacity
 
 import android.app.DownloadManager
+import android.app.NotificationChannel
 import android.app.NotificationManager
 import android.app.PendingIntent
 import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
 import android.content.IntentFilter
+import android.graphics.Color
 import android.net.Uri
+import android.os.Build
 import android.os.Bundle
 import android.view.View
 import android.widget.RadioButton
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.NotificationCompat
+import androidx.core.content.ContextCompat
 import com.udacity.databinding.ActivityMainBinding
 import timber.log.Timber
 
@@ -42,7 +46,7 @@ class MainActivity : AppCompatActivity() {
         // use material ActionBar
         setSupportActionBar(activityMainBinding.toolbar)
 
-        // register BroadcastReceiver
+        // register BroadcastReceiver for 'download complete' events
         registerReceiver(receiver, IntentFilter(DownloadManager.ACTION_DOWNLOAD_COMPLETE))
 
         // onClick listener for download button
@@ -65,16 +69,41 @@ class MainActivity : AppCompatActivity() {
                 Toast.makeText(this,"Please select the file to download",
                     Toast.LENGTH_SHORT).show()
 
-            }
+            }  // no URL chosen --> Toast
 
-        }
+        }  // OnClickListener
 
-    }
+        // get instance of NotificationManager
+        // ... used in the 'broadcast handler' (receiver) for DownloadManager
+        notificationManager = ContextCompat.getSystemService(
+            applicationContext,
+            NotificationManager::class.java
+        ) as NotificationManager
 
+        // create channel for notifications
+        createChannel(
+            CHANNEL_ID,
+            getString(R.string.notification_title)
+        )
+
+    }  // onCreate
+
+
+    // broadcast receiver for DownloadManager
     private val receiver = object : BroadcastReceiver() {
         override fun onReceive(context: Context?, intent: Intent?) {
             val id = intent?.getLongExtra(DownloadManager.EXTRA_DOWNLOAD_ID, -1)
             if (id == downloadID) Timber.i( "DONE")
+
+            // switch-off loading state of LoadingButton
+            activityMainBinding.includes.customButton.setState(ButtonState.Completed)
+
+            // send notification to indicate the completion of the download
+            context?.let {
+                notificationManager.sendNotification(
+                    applicationContext.getString(R.string.notification_description),
+                    it)
+            }
         }
     }
 
@@ -89,7 +118,7 @@ class MainActivity : AppCompatActivity() {
                 .setRequiresCharging(false)
                 .setAllowedOverMetered(true)
                 .setAllowedOverRoaming(true)
-                .setNotificationVisibility(DownloadManager.Request.VISIBILITY_VISIBLE)
+                //.setNotificationVisibility(DownloadManager.Request.VISIBILITY_VISIBLE)
 
         val downloadManager = getSystemService(DOWNLOAD_SERVICE) as DownloadManager
 
@@ -135,9 +164,34 @@ class MainActivity : AppCompatActivity() {
 
     } // onRadioButtonClicked
 
+
+    // establish notification channel
+    private fun createChannel(channelId: String, channelName: String) {
+
+        // create channel (if supported by Android)
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            val notificationChannel = NotificationChannel(
+                channelId,
+                channelName,
+                NotificationManager.IMPORTANCE_LOW
+            ).apply { setShowBadge(false) }
+
+            // configure notification channel
+            notificationChannel.enableLights(true)
+            notificationChannel.lightColor = Color.BLUE
+            notificationChannel.enableVibration(true)
+            notificationChannel.description = getString(R.string.notification_description)
+
+            // get an instance of the NotificationManager and create the channel
+            val notificationManager = getSystemService(NotificationManager::class.java)
+            notificationManager.createNotificationChannel(notificationChannel)
+        }
+
+    }  // createChannel
+
+
+    // some constants...
     companion object {
-        private const val URL =
-            "https://github.com/udacity/nd940-c3-advanced-android-programming-project-starter/archive/master.zip"
         private const val URL1 =
             "https://github.com/bumptech/glide"
             //"https://github.com/bumptech/glide/releases/download/v3.6.0/glide-3.6.0.jar"
@@ -145,7 +199,9 @@ class MainActivity : AppCompatActivity() {
             "https://github.com/udacity/nd940-c3-advanced-android-programming-project-starter"
         private const val URL3 =
             "https://github.com/square/retrofit"
-        private const val CHANNEL_ID = "channelId"
+
+        const val CHANNEL_ID = "channelId"
+        const val NOTIFICATION_ID = 42
     }
 
 }

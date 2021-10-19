@@ -43,6 +43,11 @@ class LoadingButton @JvmOverloads constructor(
         btnActive = state
     }
 
+    // setter function for the loading state (to switch off animation at the end of the download)
+    fun setState(state: ButtonState) {
+        buttonState = state
+    }
+
     // initialize some basic properties to avoid having to do so in onDraw
     private val paint = Paint(Paint.ANTI_ALIAS_FLAG).apply {
         style = Paint.Style.FILL
@@ -61,7 +66,7 @@ class LoadingButton @JvmOverloads constructor(
         repeatMode = ValueAnimator.RESTART
 
         // nominal time to cycle through the entire range (0.0 --> 1.0)
-        duration = 2000
+        duration = 1500
     }
 
     // ... 'by Delegates.observer()'
@@ -157,8 +162,8 @@ class LoadingButton @JvmOverloads constructor(
 
         // only allow the loading animation to run when it has been activated
         // (= pre-conditions have been met - this is controlled from the outside through a setter)
-        if(btnActive) {
-            // adjust state, everytime the button is clicked
+        if(btnActive && buttonState == ButtonState.Completed) {
+            // adjust state when button is clicked and in state 'Completed' (no re-triggering)
             buttonState = buttonState.next()
         }
 
