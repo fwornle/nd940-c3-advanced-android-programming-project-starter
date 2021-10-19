@@ -49,10 +49,20 @@ class MainActivity : AppCompatActivity() {
         // register BroadcastReceiver for 'download complete' events
         registerReceiver(receiver, IntentFilter(DownloadManager.ACTION_DOWNLOAD_COMPLETE))
 
+        // get instance of NotificationManager
+        // ... used in the 'broadcast handler' (receiver) for DownloadManager
+        notificationManager = ContextCompat.getSystemService(
+            applicationContext,
+            NotificationManager::class.java
+        ) as NotificationManager
+
         // onClick listener for download button
         // note: included layout are reachable via their ID (see activity_main.xml)
         // REF: https://chetangupta.net/viewbinding/#includeMerge
         activityMainBinding.includes.customButton.setOnClickListener {
+
+            // cancel all notifications
+            notificationManager.cancelNotifications()
 
             // anything selected yet?
             selUrl?.let {
@@ -72,13 +82,6 @@ class MainActivity : AppCompatActivity() {
             }  // no URL chosen --> Toast
 
         }  // OnClickListener
-
-        // get instance of NotificationManager
-        // ... used in the 'broadcast handler' (receiver) for DownloadManager
-        notificationManager = ContextCompat.getSystemService(
-            applicationContext,
-            NotificationManager::class.java
-        ) as NotificationManager
 
         // create channel for notifications
         createChannel(
