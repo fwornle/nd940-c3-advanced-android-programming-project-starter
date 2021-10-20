@@ -18,4 +18,7 @@
     <string name="title_activity_detail">DetailActivity</string>
     <string name="button_to_email">Button to Email</string>
     <string name="cloud_download_icon">Cloud download icon</string>
+    <string name="back">BACK</string>
+    <string name="download_symbol">Download symbol</string>
+    <string name="repository_downloaded">Repository downloaded:</string>
 </resources>

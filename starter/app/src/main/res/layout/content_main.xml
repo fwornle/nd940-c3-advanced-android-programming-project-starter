@@ -30,7 +30,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="vertical"
-        android:padding="20dp"
+        android:padding="@dimen/margin_general"
         android:gravity="center_vertical"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.0"
@@ -41,23 +41,23 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="70dp"
-                android:layout_marginBottom="20dp"
-                android:textSize="20sp"
+                android:layout_marginBottom="@dimen/margin_general"
+                android:textSize="@dimen/default_text_size"
                 android:text="@string/radioButton_option1"
                 android:onClick="onRadioButtonClicked"/>
 
             <RadioButton android:id="@+id/rbLink2"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginBottom="20dp"
-                android:textSize="20sp"
+                android:layout_marginBottom="@dimen/margin_general"
+                android:textSize="@dimen/default_text_size"
                 android:text="@string/radioButton_option2"
                 android:onClick="onRadioButtonClicked"/>
 
             <RadioButton android:id="@+id/rbLink3"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:textSize="20sp"
+                android:textSize="@dimen/default_text_size"
                 android:text="@string/radioButton_option3"
                 android:onClick="onRadioButtonClicked"/>
 
@@ -66,8 +66,8 @@
     <com.udacity.LoadingButton
         android:id="@+id/custom_button"
         android:layout_width="0dp"
-        android:layout_height="60dp"
-        android:layout_margin="20dp"
+        android:layout_height="@dimen/button_height"
+        android:layout_margin="@dimen/margin_general"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintBottom_toBottomOf="parent"

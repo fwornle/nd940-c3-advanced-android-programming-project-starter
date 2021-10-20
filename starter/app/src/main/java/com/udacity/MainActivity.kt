@@ -8,6 +8,7 @@ import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
 import android.content.IntentFilter
+import android.graphics.BitmapFactory
 import android.graphics.Color
 import android.net.Uri
 import android.os.Build
@@ -49,13 +50,6 @@ class MainActivity : AppCompatActivity() {
         // register BroadcastReceiver for 'download complete' events
         registerReceiver(receiver, IntentFilter(DownloadManager.ACTION_DOWNLOAD_COMPLETE))
 
-        // get instance of NotificationManager
-        // ... used in the 'broadcast handler' (receiver) for DownloadManager
-        notificationManager = ContextCompat.getSystemService(
-            applicationContext,
-            NotificationManager::class.java
-        ) as NotificationManager
-
         // onClick listener for download button
         // note: included layout are reachable via their ID (see activity_main.xml)
         // REF: https://chetangupta.net/viewbinding/#includeMerge
@@ -83,8 +77,16 @@ class MainActivity : AppCompatActivity() {
 
         }  // OnClickListener
 
+
+        // get instance of NotificationManager
+        // ... used in the 'broadcast handler' (receiver) for DownloadManager
+        notificationManager = ContextCompat.getSystemService(
+            applicationContext,
+            NotificationManager::class.java
+        ) as NotificationManager
+
         // create channel for notifications
-        createChannel(
+        notificationManager.createChannel(
             CHANNEL_ID,
             getString(R.string.notification_title)
         )
@@ -168,20 +170,20 @@ class MainActivity : AppCompatActivity() {
     } // onRadioButtonClicked
 
 
-    // establish notification channel
-    private fun createChannel(channelId: String, channelName: String) {
+    // establish notification channel (as extension function to NotificationManager)
+    private fun NotificationManager.createChannel(channelId: String, channelName: String) {
 
         // create channel (if supported by Android)
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             val notificationChannel = NotificationChannel(
                 channelId,
                 channelName,
-                NotificationManager.IMPORTANCE_LOW
-            ).apply { setShowBadge(false) }
+                NotificationManager.IMPORTANCE_HIGH
+            )//.apply { setShowBadge(false) }
 
             // configure notification channel
             notificationChannel.enableLights(true)
-            notificationChannel.lightColor = Color.BLUE
+            notificationChannel.lightColor = Color.RED
             notificationChannel.enableVibration(true)
             notificationChannel.description = getString(R.string.notification_description)
 
@@ -192,12 +194,63 @@ class MainActivity : AppCompatActivity() {
 
     }  // createChannel
 
+    // define extension function to NotificationManager for the sending of notifications
+    private fun NotificationManager.sendNotification(
+        messageBody: String,
+        applicationContext: Context) {
+
+        // create content intent for the notification to launch activity 'DetailActivity'
+        val contentIntent = Intent(applicationContext, DetailActivity::class.java).apply {
+            // key-value pair to communicate info from MainActivity to DetailActivity
+            putExtra(REPO_URL_KEY, selUrl)
+        }
+
+        // create pending intend (to associate the above described intend with the notification channel)
+        // ... note: removing the 'pending intend mutability flag' warning:
+        // https://stackoverflow.com/questions/67045607/how-to-resolve-missing-pendingintent-mutability-flag-lint-warning-in-android-a
+        pendingIntent = PendingIntent.getActivity(
+            applicationContext,
+            NOTIFICATION_ID,
+            contentIntent,
+            PendingIntent.FLAG_IMMUTABLE or PendingIntent.FLAG_UPDATE_CURRENT
+        )
+
+        // style notification
+        val cloudImage = BitmapFactory.decodeResource(
+            applicationContext.resources,
+            R.drawable.download_symbol
+        )
+        val bigPicStyle = NotificationCompat.BigPictureStyle()
+            .bigPicture(cloudImage)
+            .bigLargeIcon(null)
+
+        // configure notification builder
+        val builder = NotificationCompat.Builder(
+            applicationContext,
+            CHANNEL_ID,
+        )
+            .setSmallIcon(R.drawable.ic_cloud_download)
+            .setContentTitle(applicationContext.getString(R.string.notification_title))
+            .setContentText(messageBody)
+            .setStyle(bigPicStyle)
+            .setLargeIcon(cloudImage)
+            .setContentIntent(pendingIntent)
+            .setAutoCancel(true)
+
+        // deliver notification
+        notify(NOTIFICATION_ID, builder.build())
+
+    }
+
+    // extension function for the cancelling of all notifications
+    private fun NotificationManager.cancelNotifications() {
+        cancelAll()
+    }
 
     // some constants...
     companion object {
         private const val URL1 =
             "https://github.com/bumptech/glide"
-            //"https://github.com/bumptech/glide/releases/download/v3.6.0/glide-3.6.0.jar"
         private const val URL2 =
             "https://github.com/udacity/nd940-c3-advanced-android-programming-project-starter"
         private const val URL3 =
@@ -205,6 +258,7 @@ class MainActivity : AppCompatActivity() {
 
         const val CHANNEL_ID = "channelId"
         const val NOTIFICATION_ID = 42
+        const val REPO_URL_KEY = "repo_url"
     }
 
 }

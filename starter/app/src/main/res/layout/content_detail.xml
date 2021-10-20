@@ -9,4 +9,47 @@
     tools:context=".DetailActivity"
     tools:showIn="@layout/activity_detail">
 
+    <ImageView
+        android:id="@+id/ivDownloadSymbol"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/image_size_medium"
+        android:contentDescription="@string/download_symbol"
+        android:src="@drawable/download_symbol"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintBottom_toTopOf="@id/tvRepoName"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        />
+
+    <TextView
+        android:id="@+id/tvRepoHeader"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/repository_downloaded"
+        android:textColor="@color/primaryDarkColor"
+        android:layout_margin="@dimen/margin_general"
+        android:textStyle="bold"
+        android:textSize="@dimen/text_size_large"
+        app:layout_constraintTop_toBottomOf="@id/ivDownloadSymbol"
+        app:layout_constraintBottom_toTopOf="@+id/tvRepoName"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        />
+
+    <TextView
+        android:id="@+id/tvRepoName"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_margin="@dimen/margin_general"
+        android:text=""
+        tools:text="da repo url"
+        android:textColor="@color/primaryDarkColor"
+        android:textSize="@dimen/default_text_size"
+        app:layout_constraintTop_toBottomOf="@id/tvRepoHeader"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        />
+
+
+
 </androidx.constraintlayout.widget.ConstraintLayout>
