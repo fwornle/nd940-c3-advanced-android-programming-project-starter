@@ -30,7 +30,7 @@ class MainActivity : AppCompatActivity() {
 
     private lateinit var notificationManager: NotificationManager
     private lateinit var pendingIntent: PendingIntent
-    private lateinit var action: NotificationCompat.Action
+    //private lateinit var action: NotificationCompat.Action
 
     // view binding
     private lateinit var activityMainBinding: ActivityMainBinding
@@ -201,6 +201,11 @@ class MainActivity : AppCompatActivity() {
 
         // create content intent for the notification to launch activity 'DetailActivity'
         val contentIntent = Intent(applicationContext, DetailActivity::class.java).apply {
+
+            // add a "details button"
+            // ... removed, as default action is more comfortable to use (just click the notif.)
+            //action = Intent.ACTION_DEFAULT
+
             // key-value pair to communicate info from MainActivity to DetailActivity
             putExtra(REPO_URL_KEY, selUrl)
         }
@@ -235,6 +240,7 @@ class MainActivity : AppCompatActivity() {
             .setStyle(bigPicStyle)
             .setLargeIcon(cloudImage)
             .setContentIntent(pendingIntent)
+            //.addAction(R.drawable.details, getString(R.string.details), pendingIntent)
             .setAutoCancel(true)
 
         // deliver notification
@@ -249,11 +255,11 @@ class MainActivity : AppCompatActivity() {
 
     // some constants...
     companion object {
-        private const val URL1 =
+        const val URL1 =
             "https://github.com/bumptech/glide"
-        private const val URL2 =
+        const val URL2 =
             "https://github.com/udacity/nd940-c3-advanced-android-programming-project-starter"
-        private const val URL3 =
+        const val URL3 =
             "https://github.com/square/retrofit"
 
         const val CHANNEL_ID = "channelId"

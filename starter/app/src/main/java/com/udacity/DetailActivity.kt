@@ -32,6 +32,16 @@ class DetailActivity : AppCompatActivity() {
         // adjust text view
         binding.includes.tvRepoName.text = selUrl
 
+        // adjust preview image source
+        when (selUrl) {
+            MainActivity.URL1 ->
+                binding.includes.ivRepoPreview.setImageResource(R.drawable.glide_preview)
+            MainActivity.URL2 ->
+                binding.includes.ivRepoPreview.setImageResource(R.drawable.loadapp_preview)
+            MainActivity.URL3 ->
+                binding.includes.ivRepoPreview.setImageResource(R.drawable.retrofit_preview)
+        }
+
     }
 
 }
