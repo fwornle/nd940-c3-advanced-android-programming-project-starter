@@ -5,5 +5,5 @@
     <dimen name="button_height">60dp</dimen>
     <dimen name="margin_general">20dp</dimen>
     <dimen name="text_size_large">26sp</dimen>
-    <dimen name="image_size_medium">300dp</dimen>
+    <dimen name="image_size_medium">200dp</dimen>
 </resources>
